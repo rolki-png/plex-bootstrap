@@ -1,5 +1,5 @@
-import { apiJson } from "../http.ts";
-import type { StepResult, WireContext } from "../types.ts";
+import { apiJson } from "../http.js";
+import type { StepResult, WireContext } from "../types.js";
 
 const STEP_NAME = "prowlarr";
 const FLARESOLVERR_TAG = "flaresolverr";

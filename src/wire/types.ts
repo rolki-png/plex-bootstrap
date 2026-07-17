@@ -1,5 +1,5 @@
-import type { StackConfig } from "../types.ts";
-import type { WireState } from "./state.ts";
+import type { StackConfig } from "../types.js";
+import type { WireState } from "./state.js";
 
 export type StepResult = {
   name: string;

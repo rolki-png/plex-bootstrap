@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { StepResult, WireContext } from "../types.ts";
+import type { StepResult, WireContext } from "../types.js";
 
 type ParsedUrl = {
   hostname: string;

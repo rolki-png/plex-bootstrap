@@ -1,4 +1,4 @@
-import { apiJson } from "../http.ts";
+import { apiJson } from "../http.js";
 
 const CLIENT_NAME = "qBittorrent";
 const DEFAULT_USER = "admin";

@@ -1,6 +1,6 @@
-import type { StackConfig } from "../../types.ts";
-import type { ServiceModule } from "../merge.ts";
-import { mediaOnly } from "./networks.ts";
+import type { StackConfig } from "../../types.js";
+import type { ServiceModule } from "../merge.js";
+import { mediaOnly } from "./networks.js";
 
 export function buildRecyclarr(_cfg: StackConfig): ServiceModule {
   return {

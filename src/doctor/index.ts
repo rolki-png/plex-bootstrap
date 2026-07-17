@@ -1,4 +1,4 @@
-import type { DoctorCheck, DoctorDeps } from "./checks.ts";
+import type { DoctorCheck, DoctorDeps } from "./checks.js";
 
 export type DoctorReport = { ok: boolean; checks: DoctorCheck[] };
 

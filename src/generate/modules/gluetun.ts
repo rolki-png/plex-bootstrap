@@ -1,6 +1,6 @@
-import type { StackConfig } from "../../types.ts";
-import type { ServiceModule } from "../merge.ts";
-import { downloadOnly } from "./networks.ts";
+import type { StackConfig } from "../../types.js";
+import type { ServiceModule } from "../merge.js";
+import { downloadOnly } from "./networks.js";
 
 export function buildGluetun(cfg: StackConfig): ServiceModule {
   const vpn = cfg.vpn ?? { provider: "", username: "", password: "" };

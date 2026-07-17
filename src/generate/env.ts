@@ -1,4 +1,4 @@
-import type { StackConfig } from "../types.ts";
+import type { StackConfig } from "../types.js";
 
 export function renderEnv(config: StackConfig): string {
   return [

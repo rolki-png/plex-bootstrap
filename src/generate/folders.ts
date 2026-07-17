@@ -1,6 +1,6 @@
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
-import type { ServiceFlags, StackConfig } from "../types.ts";
+import type { ServiceFlags, StackConfig } from "../types.js";
 
 const MEDIA_PATHS = ["media/movies", "media/tv", "torrents/movies", "torrents/tv"] as const;
 

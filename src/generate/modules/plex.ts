@@ -1,7 +1,7 @@
-import type { StackConfig } from "../../types.ts";
-import type { ServiceModule } from "../merge.ts";
-import { linuxserverEnv, standardVolumes } from "./linuxserver.ts";
-import { mediaOnly } from "./networks.ts";
+import type { StackConfig } from "../../types.js";
+import type { ServiceModule } from "../merge.js";
+import { linuxserverEnv, standardVolumes } from "./linuxserver.js";
+import { mediaOnly } from "./networks.js";
 
 export function buildPlex(_cfg: StackConfig): ServiceModule {
   return {

@@ -1,7 +1,7 @@
-import type { StackConfig } from "../../types.ts";
-import type { ServiceModule } from "../merge.ts";
-import { linuxserverEnv, standardVolumes } from "./linuxserver.ts";
-import { downloadOnly } from "./networks.ts";
+import type { StackConfig } from "../../types.js";
+import type { ServiceModule } from "../merge.js";
+import { linuxserverEnv, standardVolumes } from "./linuxserver.js";
+import { downloadOnly } from "./networks.js";
 
 export function buildQbittorrent(cfg: StackConfig): ServiceModule {
   const base = {

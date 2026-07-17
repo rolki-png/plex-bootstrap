@@ -1,10 +1,10 @@
-import { wireQbittorrent } from "./steps/qbittorrent.ts";
-import { wireSonarr } from "./steps/sonarr.ts";
-import { wireRadarr } from "./steps/radarr.ts";
-import { wireProwlarr } from "./steps/prowlarr.ts";
-import { wireSeerr } from "./steps/seerr.ts";
-import { wireExtras } from "./steps/extras.ts";
-import type { StepResult, WireContext } from "./types.ts";
+import { wireQbittorrent } from "./steps/qbittorrent.js";
+import { wireSonarr } from "./steps/sonarr.js";
+import { wireRadarr } from "./steps/radarr.js";
+import { wireProwlarr } from "./steps/prowlarr.js";
+import { wireSeerr } from "./steps/seerr.js";
+import { wireExtras } from "./steps/extras.js";
+import type { StepResult, WireContext } from "./types.js";
 
 export type WireReport = {
   ok: boolean;

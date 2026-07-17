@@ -1,6 +1,6 @@
-import type { StackConfig } from "../../types.ts";
-import type { ServiceModule } from "../merge.ts";
-import { mediaAndDownload } from "./networks.ts";
+import type { StackConfig } from "../../types.js";
+import type { ServiceModule } from "../merge.js";
+import { mediaAndDownload } from "./networks.js";
 
 export function buildUnpackerr(_cfg: StackConfig): ServiceModule {
   return {

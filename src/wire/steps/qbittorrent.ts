@@ -1,4 +1,4 @@
-import type { StepResult, WireContext } from "../types.ts";
+import type { StepResult, WireContext } from "../types.js";
 
 const STEP_NAME = "qbittorrent";
 const DEFAULT_USER = "admin";

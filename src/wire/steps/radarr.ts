@@ -1,5 +1,5 @@
-import { ensureDownloadClient, ensureRootFolder } from "./arr-shared.ts";
-import type { StepResult, WireContext } from "../types.ts";
+import { ensureDownloadClient, ensureRootFolder } from "./arr-shared.js";
+import type { StepResult, WireContext } from "../types.js";
 
 const STEP_NAME = "radarr";
 const ROOT_PATH = "/data/media/movies";
