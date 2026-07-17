@@ -11,6 +11,7 @@ export function buildBazarr(_cfg: StackConfig): ServiceModule {
       container_name: "bazarr",
       environment: linuxserverEnv(),
       volumes: standardVolumes("bazarr"),
+      ports: ["6767:6767"],
       networks: mediaOnly(),
       restart: "unless-stopped",
     },

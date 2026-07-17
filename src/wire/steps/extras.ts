@@ -111,8 +111,8 @@ protocols = "torrent,TorrentDownloadProtocol"
 }
 
 async function wireUnpackerr(ctx: WireContext): Promise<StepResult> {
-  const sonarrUrl = ctx.baseUrls.sonarr;
-  const radarrUrl = ctx.baseUrls.radarr;
+  const sonarrUrl = ctx.internalUrls.sonarr;
+  const radarrUrl = ctx.internalUrls.radarr;
   const sonarrKey = ctx.state.apiKeys.sonarr;
   const radarrKey = ctx.state.apiKeys.radarr;
 
@@ -154,8 +154,8 @@ async function wireUnpackerr(ctx: WireContext): Promise<StepResult> {
 async function wireBazarr(ctx: WireContext): Promise<StepResult> {
   const bazarrUrl = ctx.baseUrls.bazarr;
   const bazarrKey = ctx.state.apiKeys.bazarr;
-  const sonarrUrl = ctx.baseUrls.sonarr;
-  const radarrUrl = ctx.baseUrls.radarr;
+  const sonarrUrl = ctx.internalUrls.sonarr;
+  const radarrUrl = ctx.internalUrls.radarr;
   const sonarrKey = ctx.state.apiKeys.sonarr;
   const radarrKey = ctx.state.apiKeys.radarr;
 
@@ -254,7 +254,7 @@ async function tautulliGet<T>(
 async function wireTautulli(ctx: WireContext): Promise<StepResult> {
   const tautulliUrl = ctx.baseUrls.tautulli;
   const tautulliKey = ctx.state.apiKeys.tautulli;
-  const plexUrl = ctx.baseUrls.plex;
+  const plexUrl = ctx.internalUrls.plex;
   const plexToken = ctx.state.apiKeys.plex;
 
   if (!tautulliUrl || !tautulliKey) {
@@ -334,7 +334,7 @@ async function wireTautulli(ctx: WireContext): Promise<StepResult> {
 }
 
 function wireJackett(ctx: WireContext): StepResult {
-  const jackettUrl = ctx.baseUrls.jackett ?? "http://jackett:9117";
+  const jackettUrl = ctx.internalUrls.jackett ?? "http://jackett:9117";
   const apiKey = ctx.state.apiKeys.jackett ?? "YOUR_JACKETT_API_KEY";
   const parsed = parseBaseUrl(jackettUrl);
   const torznabBase = `${parsed.useSsl ? "https" : "http"}://${parsed.hostname}:${parsed.port}/api/v2/indexers`;

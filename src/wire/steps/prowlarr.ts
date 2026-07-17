@@ -120,7 +120,8 @@ function buildFlareSolverrProxy(tagId: number, existing?: IndexerProxy): Indexer
 }
 
 async function ensureApplications(
-  prowlarrUrl: string,
+  apiBaseUrl: string,
+  persistedProwlarrUrl: string,
   apiKey: string,
   apps: Application[],
   targets: { appType: ArrAppType; appUrl: string; appApiKey: string }[],
@@ -130,14 +131,14 @@ async function ensureApplications(
 
   for (const { appType, appUrl, appApiKey } of targets) {
     const existing = apps.find((a) => a.implementation === appType);
-    const desired = buildApplication(appType, prowlarrUrl, appUrl, appApiKey, existing);
+    const desired = buildApplication(appType, persistedProwlarrUrl, appUrl, appApiKey, existing);
 
-    if (existing && applicationMatches(existing, prowlarrUrl, appUrl, appApiKey, appType)) {
+    if (existing && applicationMatches(existing, persistedProwlarrUrl, appUrl, appApiKey, appType)) {
       continue;
     }
 
     if (existing?.id !== undefined) {
-      await apiJson(`${prowlarrUrl}/api/v1/applications/${existing.id}`, {
+      await apiJson(`${apiBaseUrl}/api/v1/applications/${existing.id}`, {
         method: "PUT",
         apiKey,
         fetchFn,
@@ -147,7 +148,7 @@ async function ensureApplications(
       continue;
     }
 
-    await apiJson(`${prowlarrUrl}/api/v1/applications`, {
+    await apiJson(`${apiBaseUrl}/api/v1/applications`, {
       method: "POST",
       apiKey,
       fetchFn,
@@ -220,8 +221,8 @@ async function ensureFlareSolverrProxy(
 }
 
 export async function wireProwlarr(ctx: WireContext): Promise<StepResult> {
-  const prowlarrUrl = ctx.baseUrls.prowlarr;
-  if (!prowlarrUrl) {
+  const prowlarrApiUrl = ctx.baseUrls.prowlarr;
+  if (!prowlarrApiUrl) {
     return {
       name: STEP_NAME,
       ok: false,
@@ -240,8 +241,9 @@ export async function wireProwlarr(ctx: WireContext): Promise<StepResult> {
     };
   }
 
-  const sonarrUrl = ctx.baseUrls.sonarr;
-  const radarrUrl = ctx.baseUrls.radarr;
+  const persistedProwlarrUrl = ctx.internalUrls.prowlarr ?? prowlarrApiUrl;
+  const sonarrUrl = ctx.internalUrls.sonarr;
+  const radarrUrl = ctx.internalUrls.radarr;
   const sonarrKey = ctx.state.apiKeys.sonarr;
   const radarrKey = ctx.state.apiKeys.radarr;
 
@@ -250,7 +252,7 @@ export async function wireProwlarr(ctx: WireContext): Promise<StepResult> {
       name: STEP_NAME,
       ok: false,
       detail: "sonarr base URL or API key not configured",
-      fallback: "Set baseUrls.sonarr and state.apiKeys.sonarr in wire context",
+      fallback: "Set internalUrls.sonarr and state.apiKeys.sonarr in wire context",
     };
   }
 
@@ -259,7 +261,7 @@ export async function wireProwlarr(ctx: WireContext): Promise<StepResult> {
       name: STEP_NAME,
       ok: false,
       detail: "radarr base URL or API key not configured",
-      fallback: "Set baseUrls.radarr and state.apiKeys.radarr in wire context",
+      fallback: "Set internalUrls.radarr and state.apiKeys.radarr in wire context",
     };
   }
 
@@ -267,13 +269,14 @@ export async function wireProwlarr(ctx: WireContext): Promise<StepResult> {
   const flaresolverr = ctx.config.services.flaresolverr;
 
   try {
-    const apps = await apiJson<Application[]>(`${prowlarrUrl}/api/v1/applications`, {
+    const apps = await apiJson<Application[]>(`${prowlarrApiUrl}/api/v1/applications`, {
       apiKey,
       fetchFn,
     });
 
     await ensureApplications(
-      prowlarrUrl,
+      prowlarrApiUrl,
+      persistedProwlarrUrl,
       apiKey,
       apps,
       [
@@ -284,8 +287,8 @@ export async function wireProwlarr(ctx: WireContext): Promise<StepResult> {
     );
 
     if (flaresolverr) {
-      const tagId = await ensureFlareSolverrTag(prowlarrUrl, apiKey, fetchFn);
-      await ensureFlareSolverrProxy(prowlarrUrl, apiKey, tagId, fetchFn);
+      const tagId = await ensureFlareSolverrTag(prowlarrApiUrl, apiKey, fetchFn);
+      await ensureFlareSolverrProxy(prowlarrApiUrl, apiKey, tagId, fetchFn);
     }
 
     return {

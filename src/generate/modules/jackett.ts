@@ -11,6 +11,7 @@ export function buildJackett(_cfg: StackConfig): ServiceModule {
       container_name: "jackett",
       environment: linuxserverEnv(),
       volumes: standardVolumes("jackett"),
+      ports: ["9117:9117"],
       networks: mediaOnly(),
       restart: "unless-stopped",
     },

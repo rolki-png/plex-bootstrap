@@ -11,6 +11,7 @@ export function buildRadarr(_cfg: StackConfig): ServiceModule {
       container_name: "radarr",
       environment: linuxserverEnv(),
       volumes: standardVolumes("radarr"),
+      ports: ["7878:7878"],
       networks: mediaAndDownload(),
       restart: "unless-stopped",
     },

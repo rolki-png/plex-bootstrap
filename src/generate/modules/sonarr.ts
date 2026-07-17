@@ -11,6 +11,7 @@ export function buildSonarr(_cfg: StackConfig): ServiceModule {
       container_name: "sonarr",
       environment: linuxserverEnv(),
       volumes: standardVolumes("sonarr"),
+      ports: ["8989:8989"],
       networks: mediaAndDownload(),
       restart: "unless-stopped",
     },

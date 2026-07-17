@@ -2,6 +2,17 @@ import type { DoctorCheck, DoctorDeps } from "./checks.js";
 
 export type DoctorReport = { ok: boolean; checks: DoctorCheck[] };
 
+function isComposeVersionOk(stdout: string): boolean {
+  if (/version/i.test(stdout)) {
+    return true;
+  }
+  if (/v2\./i.test(stdout)) {
+    return true;
+  }
+  const major = stdout.match(/\bv(\d+)\./i)?.[1];
+  return major !== undefined && Number(major) >= 2;
+}
+
 export async function runDoctor(deps: DoctorDeps): Promise<DoctorReport> {
   const checks: DoctorCheck[] = [];
 
@@ -15,8 +26,8 @@ export async function runDoctor(deps: DoctorDeps): Promise<DoctorReport> {
   const compose = await deps.exec("docker compose version");
   checks.push({
     name: "compose",
-    ok: compose.code === 0 && /v2\./i.test(compose.stdout),
-    detail: compose.stdout.trim() || compose.stderr.trim() || "compose v2 required",
+    ok: compose.code === 0 && isComposeVersionOk(compose.stdout),
+    detail: compose.stdout.trim() || compose.stderr.trim() || "compose v2+ required",
   });
 
   const info = await deps.exec("docker info");

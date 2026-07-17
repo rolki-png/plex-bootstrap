@@ -27,6 +27,11 @@ function makeCtx(fetchFn: typeof fetch, flaresolverr = false): WireContext {
       failedSteps: [],
     },
     baseUrls: {
+      prowlarr: "http://localhost:9696",
+      sonarr: "http://localhost:8989",
+      radarr: "http://localhost:7878",
+    },
+    internalUrls: {
       prowlarr: "http://prowlarr:9696",
       sonarr: "http://sonarr:8989",
       radarr: "http://radarr:7878",
@@ -55,12 +60,12 @@ describe("wireProwlarr", () => {
     expect(mockFetch).toHaveBeenCalledTimes(3);
 
     const [appsListUrl, appsListInit] = mockFetch.mock.calls[0]!;
-    expect(appsListUrl).toBe("http://prowlarr:9696/api/v1/applications");
+    expect(appsListUrl).toBe("http://localhost:9696/api/v1/applications");
     const appsListHeaders = appsListInit?.headers as Headers;
     expect(appsListHeaders.get("X-Api-Key")).toBe("prowlarr-key");
 
     const [sonarrUrl, sonarrInit] = mockFetch.mock.calls[1]!;
-    expect(sonarrUrl).toBe("http://prowlarr:9696/api/v1/applications");
+    expect(sonarrUrl).toBe("http://localhost:9696/api/v1/applications");
     expect(sonarrInit?.method).toBe("POST");
     const sonarrBody = JSON.parse(sonarrInit?.body as string);
     expect(sonarrBody.name).toBe("Sonarr");
@@ -71,7 +76,7 @@ describe("wireProwlarr", () => {
     expect(fieldValue(sonarrBody.fields, "apiKey")).toBe("sonarr-key");
 
     const [radarrUrl, radarrInit] = mockFetch.mock.calls[2]!;
-    expect(radarrUrl).toBe("http://prowlarr:9696/api/v1/applications");
+    expect(radarrUrl).toBe("http://localhost:9696/api/v1/applications");
     expect(radarrInit?.method).toBe("POST");
     const radarrBody = JSON.parse(radarrInit?.body as string);
     expect(radarrBody.name).toBe("Radarr");
@@ -152,12 +157,12 @@ describe("wireProwlarr", () => {
     expect(mockFetch).toHaveBeenCalledTimes(7);
 
     const [tagCreateUrl, tagCreateInit] = mockFetch.mock.calls[4]!;
-    expect(tagCreateUrl).toBe("http://prowlarr:9696/api/v1/tag");
+    expect(tagCreateUrl).toBe("http://localhost:9696/api/v1/tag");
     expect(tagCreateInit?.method).toBe("POST");
     expect(JSON.parse(tagCreateInit?.body as string)).toEqual({ label: "flaresolverr" });
 
     const [proxyCreateUrl, proxyCreateInit] = mockFetch.mock.calls[6]!;
-    expect(proxyCreateUrl).toBe("http://prowlarr:9696/api/v1/indexerproxy");
+    expect(proxyCreateUrl).toBe("http://localhost:9696/api/v1/indexerproxy");
     expect(proxyCreateInit?.method).toBe("POST");
     const proxyBody = JSON.parse(proxyCreateInit?.body as string);
     expect(proxyBody.name).toBe("FlareSolverr");

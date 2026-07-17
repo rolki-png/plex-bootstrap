@@ -25,7 +25,8 @@ function makeCtx(fetchFn: typeof fetch, vpn = false): WireContext {
       },
     },
     state: { apiKeys: { sonarr: "sonarr-key" }, completedSteps: [], failedSteps: [] },
-    baseUrls: { sonarr: "http://sonarr:8989" },
+    baseUrls: { sonarr: "http://localhost:8989" },
+    internalUrls: {},
     fetchFn,
   };
 }
@@ -51,20 +52,20 @@ describe("wireSonarr", () => {
     expect(mockFetch).toHaveBeenCalledTimes(4);
 
     const [rootListUrl, rootListInit] = mockFetch.mock.calls[0]!;
-    expect(rootListUrl).toBe("http://sonarr:8989/api/v3/rootfolder");
+    expect(rootListUrl).toBe("http://localhost:8989/api/v3/rootfolder");
     const rootListHeaders = rootListInit?.headers as Headers;
     expect(rootListHeaders.get("X-Api-Key")).toBe("sonarr-key");
 
     const [rootCreateUrl, rootCreateInit] = mockFetch.mock.calls[1]!;
-    expect(rootCreateUrl).toBe("http://sonarr:8989/api/v3/rootfolder");
+    expect(rootCreateUrl).toBe("http://localhost:8989/api/v3/rootfolder");
     expect(rootCreateInit?.method).toBe("POST");
     expect(JSON.parse(rootCreateInit?.body as string)).toEqual({ path: "/data/media/tv" });
 
     const [clientListUrl] = mockFetch.mock.calls[2]!;
-    expect(clientListUrl).toBe("http://sonarr:8989/api/v3/downloadclient");
+    expect(clientListUrl).toBe("http://localhost:8989/api/v3/downloadclient");
 
     const [clientCreateUrl, clientCreateInit] = mockFetch.mock.calls[3]!;
-    expect(clientCreateUrl).toBe("http://sonarr:8989/api/v3/downloadclient");
+    expect(clientCreateUrl).toBe("http://localhost:8989/api/v3/downloadclient");
     expect(clientCreateInit?.method).toBe("POST");
     const clientBody = JSON.parse(clientCreateInit?.body as string);
     expect(clientBody.name).toBe("qBittorrent");

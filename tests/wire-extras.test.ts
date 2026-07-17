@@ -12,6 +12,7 @@ function makeCtx(
     fetchFn?: typeof fetch;
     apiKeys?: Record<string, string>;
     baseUrls?: Record<string, string>;
+    internalUrls?: Record<string, string>;
     configRoot?: string;
   } = {},
 ): WireContext {
@@ -45,13 +46,22 @@ function makeCtx(
       failedSteps: [],
     },
     baseUrls: {
+      sonarr: "http://localhost:8989",
+      radarr: "http://localhost:7878",
+      plex: "http://localhost:32400",
+      bazarr: "http://localhost:6767",
+      tautulli: "http://localhost:8181",
+      jackett: "http://localhost:9117",
+      ...overrides.baseUrls,
+    },
+    internalUrls: {
       sonarr: "http://sonarr:8989",
       radarr: "http://radarr:7878",
       plex: "http://plex:32400",
       bazarr: "http://bazarr:6767",
       tautulli: "http://tautulli:8181",
       jackett: "http://jackett:9117",
-      ...overrides.baseUrls,
+      ...overrides.internalUrls,
     },
     fetchFn: overrides.fetchFn,
   };
@@ -213,7 +223,7 @@ describe("wireExtras", () => {
     expect(identityUrl).toContain("apikey=tautulli-key");
 
     const [configUrl, configInit] = mockFetch.mock.calls[1]!;
-    expect(configUrl).toBe("http://tautulli:8181/configUpdate");
+    expect(configUrl).toBe("http://localhost:8181/configUpdate");
     expect(configInit?.method).toBe("POST");
     const body = configInit?.body as string;
     expect(body).toContain("pms_ip=plex");

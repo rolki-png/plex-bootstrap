@@ -28,6 +28,12 @@ function makeCtx(fetchFn: typeof fetch, plexToken?: string): WireContext {
       failedSteps: [],
     },
     baseUrls: {
+      seerr: "http://localhost:5055",
+      plex: "http://localhost:32400",
+      sonarr: "http://localhost:8989",
+      radarr: "http://localhost:7878",
+    },
+    internalUrls: {
       seerr: "http://seerr:5055",
       plex: "http://plex:32400",
       sonarr: "http://sonarr:8989",
@@ -104,12 +110,12 @@ describe("wireSeerr", () => {
     expect(mockFetch).toHaveBeenCalledTimes(9);
 
     const [sonarrListUrl, sonarrListInit] = mockFetch.mock.calls[0]!;
-    expect(sonarrListUrl).toBe("http://seerr:5055/api/v1/settings/sonarr");
+    expect(sonarrListUrl).toBe("http://localhost:5055/api/v1/settings/sonarr");
     const sonarrListHeaders = sonarrListInit?.headers as Headers;
     expect(sonarrListHeaders.get("X-Api-Key")).toBe("seerr-key");
 
     const [sonarrTestUrl, sonarrTestInit] = mockFetch.mock.calls[3]!;
-    expect(sonarrTestUrl).toBe("http://seerr:5055/api/v1/settings/sonarr/test");
+    expect(sonarrTestUrl).toBe("http://localhost:5055/api/v1/settings/sonarr/test");
     expect(sonarrTestInit?.method).toBe("POST");
     const sonarrTestBody = JSON.parse(sonarrTestInit?.body as string);
     expect(sonarrTestBody.hostname).toBe("sonarr");
@@ -117,7 +123,7 @@ describe("wireSeerr", () => {
     expect(sonarrTestBody.apiKey).toBe("sonarr-key");
 
     const [sonarrCreateUrl, sonarrCreateInit] = mockFetch.mock.calls[4]!;
-    expect(sonarrCreateUrl).toBe("http://seerr:5055/api/v1/settings/sonarr");
+    expect(sonarrCreateUrl).toBe("http://localhost:5055/api/v1/settings/sonarr");
     expect(sonarrCreateInit?.method).toBe("POST");
     const sonarrBody = JSON.parse(sonarrCreateInit?.body as string);
     expect(sonarrBody.name).toBe("Sonarr");
@@ -129,7 +135,7 @@ describe("wireSeerr", () => {
     const [, radarrCreateInit] = mockFetch.mock.calls[6]!;
 
     const [authUrl, authInit] = mockFetch.mock.calls[7]!;
-    expect(authUrl).toBe("http://seerr:5055/api/v1/auth/plex");
+    expect(authUrl).toBe("http://localhost:5055/api/v1/auth/plex");
     expect(authInit?.method).toBe("POST");
     expect(JSON.parse(authInit?.body as string)).toEqual({ authToken: "plex-auth-token" });
     const radarrBody = JSON.parse(radarrCreateInit?.body as string);
@@ -138,7 +144,7 @@ describe("wireSeerr", () => {
     expect(radarrBody.activeDirectory).toBe("/data/media/movies");
 
     const [plexUrl, plexInit] = mockFetch.mock.calls[8]!;
-    expect(plexUrl).toBe("http://seerr:5055/api/v1/settings/plex");
+    expect(plexUrl).toBe("http://localhost:5055/api/v1/settings/plex");
     expect(plexInit?.method).toBe("POST");
     expect(JSON.parse(plexInit?.body as string)).toEqual({
       ip: "plex",

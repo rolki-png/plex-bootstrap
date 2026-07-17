@@ -13,7 +13,7 @@ export type InitDeps = {
   outDir: string;
 };
 
-export async function runInit(deps: InitDeps): Promise<WireReport> {
+export async function runInit(deps: InitDeps): Promise<number> {
   const config = await deps.prompt();
   const doctorReport = await deps.doctor(config.dataRoot);
   if (!doctorReport.ok) {
@@ -26,5 +26,15 @@ export async function runInit(deps: InitDeps): Promise<WireReport> {
 
   await deps.generate(config, deps.outDir);
   await deps.compose.up(deps.outDir);
-  return deps.wire();
+  const report = await deps.wire();
+
+  for (const step of report.steps) {
+    const status = step.ok ? "ok" : "FAIL";
+    console.log(`[${status}] ${step.name}: ${step.detail}`);
+    if (step.fallback) {
+      console.log(`  fallback: ${step.fallback}`);
+    }
+  }
+
+  return report.coreOk ? 0 : 1;
 }

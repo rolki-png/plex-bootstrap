@@ -11,6 +11,7 @@ export function buildTautulli(_cfg: StackConfig): ServiceModule {
       container_name: "tautulli",
       environment: linuxserverEnv(),
       volumes: standardVolumes("tautulli"),
+      ports: ["8181:8181"],
       networks: mediaOnly(),
       restart: "unless-stopped",
     },

@@ -341,9 +341,9 @@ export async function wireSeerr(ctx: WireContext): Promise<StepResult> {
     };
   }
 
-  const sonarrUrl = ctx.baseUrls.sonarr;
-  const radarrUrl = ctx.baseUrls.radarr;
-  const plexUrl = ctx.baseUrls.plex;
+  const sonarrUrl = ctx.internalUrls.sonarr;
+  const radarrUrl = ctx.internalUrls.radarr;
+  const plexUrl = ctx.internalUrls.plex;
   const sonarrKey = ctx.state.apiKeys.sonarr;
   const radarrKey = ctx.state.apiKeys.radarr;
 

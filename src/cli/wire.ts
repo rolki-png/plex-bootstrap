@@ -1,4 +1,4 @@
-import { buildLocalBaseUrls } from "./ports.js";
+import { buildInternalUrls, buildLocalBaseUrls } from "./ports.js";
 import { loadStackConfig, wireStatePath } from "./config-store.js";
 import { loadState, saveState } from "../wire/state.js";
 import { runWire } from "../wire/index.js";
@@ -15,6 +15,7 @@ export async function runWireCommand(
     config,
     state,
     baseUrls: buildLocalBaseUrls(config),
+    internalUrls: buildInternalUrls(config),
   };
 
   const report = await runWire(ctx, { retryFailedOnly: opts?.retry ?? false });

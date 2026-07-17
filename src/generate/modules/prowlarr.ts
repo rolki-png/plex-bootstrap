@@ -11,6 +11,7 @@ export function buildProwlarr(_cfg: StackConfig): ServiceModule {
       container_name: "prowlarr",
       environment: linuxserverEnv(),
       volumes: standardVolumes("prowlarr"),
+      ports: ["9696:9696"],
       networks: mediaOnly(),
       restart: "unless-stopped",
     },

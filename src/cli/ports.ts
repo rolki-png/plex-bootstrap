@@ -12,15 +12,28 @@ const LOCAL_PORTS: Record<string, number> = {
   jackett: 9117,
 };
 
-export function buildLocalBaseUrls(config: StackConfig): Record<string, string> {
+function urlsForEnabledServices(
+  config: StackConfig,
+  format: (service: string, port: number) => string,
+): Record<string, string> {
   const urls: Record<string, string> = {};
 
   for (const [service, port] of Object.entries(LOCAL_PORTS)) {
     const flag = config.services[service as keyof StackConfig["services"]];
     if (flag) {
-      urls[service] = `http://localhost:${port}`;
+      urls[service] = format(service, port);
     }
   }
 
   return urls;
+}
+
+/** Host-reachable URLs for CLI API calls. */
+export function buildLocalBaseUrls(config: StackConfig): Record<string, string> {
+  return urlsForEnabledServices(config, (_service, port) => `http://localhost:${port}`);
+}
+
+/** Docker DNS URLs for config persisted inside containers. */
+export function buildInternalUrls(config: StackConfig): Record<string, string> {
+  return urlsForEnabledServices(config, (service, port) => `http://${service}:${port}`);
 }

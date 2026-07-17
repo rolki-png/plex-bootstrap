@@ -28,6 +28,7 @@ function makeCtx(overrides: Partial<WireContext> = {}): WireContext {
     }),
     state: { apiKeys: {}, completedSteps: [], failedSteps: [] },
     baseUrls: {},
+    internalUrls: {},
     ...overrides,
   };
 }

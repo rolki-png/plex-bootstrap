@@ -32,6 +32,13 @@ describe("generateStack core", () => {
     expect(env).toContain("PUID=1000");
     expect(env).toContain("TZ=Europe/Budapest");
     expect(env).toContain(`DATA_ROOT=${dataRoot}`);
+
+    const sonarr = doc.services.sonarr as { ports?: string[] };
+    const radarr = doc.services.radarr as { ports?: string[] };
+    const prowlarr = doc.services.prowlarr as { ports?: string[] };
+    expect(sonarr.ports).toEqual(["8989:8989"]);
+    expect(radarr.ports).toEqual(["7878:7878"]);
+    expect(prowlarr.ports).toEqual(["9696:9696"]);
   });
 
   it("creates hardlink-safe folder skeleton under dataRoot", async () => {

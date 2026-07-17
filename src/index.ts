@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 import { doctorCommand } from "./cli/doctor.js";
 import { runInit } from "./cli/init.js";
 import { saveStackConfig, wireStatePath } from "./cli/config-store.js";
-import { buildLocalBaseUrls } from "./cli/ports.js";
+import { buildInternalUrls, buildLocalBaseUrls } from "./cli/ports.js";
 import { runWireCommand } from "./cli/wire.js";
 import { createDockerCompose } from "./cli/up.js";
 import { generateStack } from "./generate/index.js";
@@ -39,7 +39,7 @@ program
     const compose = createDockerCompose();
     let savedConfig: StackConfig | undefined;
 
-    await runInit({
+    const code = await runInit({
       prompt: promptStackConfig,
       doctor: runDoctorForDataRoot,
       generate: async (config, dir) => {
@@ -56,6 +56,7 @@ program
           config,
           state,
           baseUrls: buildLocalBaseUrls(config),
+          internalUrls: buildInternalUrls(config),
         };
         const report = await runWire(ctx);
         await saveState(wireStatePath(config), ctx.state);
@@ -63,6 +64,7 @@ program
       },
       outDir,
     });
+    process.exitCode = code;
   });
 
 program

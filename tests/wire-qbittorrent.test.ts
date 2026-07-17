@@ -13,7 +13,8 @@ function makeCtx(fetchFn: typeof fetch): WireContext {
       timezone: "UTC",
     }),
     state: { apiKeys: {}, completedSteps: [], failedSteps: [] },
-    baseUrls: { qbittorrent: "http://qbittorrent:8080" },
+    baseUrls: { qbittorrent: "http://localhost:8080" },
+    internalUrls: {},
     fetchFn,
   };
 }
@@ -44,33 +45,33 @@ describe("wireQbittorrent", () => {
     expect(mockFetch).toHaveBeenCalledTimes(4);
 
     const [loginUrl, loginInit] = mockFetch.mock.calls[0]!;
-    expect(loginUrl).toBe("http://qbittorrent:8080/api/v2/auth/login");
+    expect(loginUrl).toBe("http://localhost:8080/api/v2/auth/login");
     expect(loginInit?.method).toBe("POST");
     expect(loginInit?.body).toBe("username=admin&password=adminadmin");
     expect(loginInit?.headers).toMatchObject({
       "Content-Type": "application/x-www-form-urlencoded",
-      Referer: "http://qbittorrent:8080",
+      Referer: "http://localhost:8080",
     });
 
     const [categoriesUrl, categoriesInit] = mockFetch.mock.calls[1]!;
-    expect(categoriesUrl).toBe("http://qbittorrent:8080/api/v2/torrents/categories");
+    expect(categoriesUrl).toBe("http://localhost:8080/api/v2/torrents/categories");
     expect(categoriesInit?.method).toBeUndefined();
     expect(categoriesInit?.headers).toMatchObject({
       Cookie: "SID=test-sid",
-      Referer: "http://qbittorrent:8080",
+      Referer: "http://localhost:8080",
     });
 
     const [moviesUrl, moviesInit] = mockFetch.mock.calls[2]!;
-    expect(moviesUrl).toBe("http://qbittorrent:8080/api/v2/torrents/createCategory");
+    expect(moviesUrl).toBe("http://localhost:8080/api/v2/torrents/createCategory");
     expect(moviesInit?.method).toBe("POST");
     expect(moviesInit?.body).toBe("category=movies&savePath=%2Fdata%2Ftorrents%2Fmovies");
     expect(moviesInit?.headers).toMatchObject({
       Cookie: "SID=test-sid",
-      Referer: "http://qbittorrent:8080",
+      Referer: "http://localhost:8080",
     });
 
     const [tvUrl, tvInit] = mockFetch.mock.calls[3]!;
-    expect(tvUrl).toBe("http://qbittorrent:8080/api/v2/torrents/createCategory");
+    expect(tvUrl).toBe("http://localhost:8080/api/v2/torrents/createCategory");
     expect(tvInit?.method).toBe("POST");
     expect(tvInit?.body).toBe("category=tv&savePath=%2Fdata%2Ftorrents%2Ftv");
     expect(tvInit?.headers).toMatchObject({
@@ -111,12 +112,12 @@ describe("wireQbittorrent", () => {
     expect(mockFetch).toHaveBeenCalledTimes(4);
 
     const [moviesUrl, moviesInit] = mockFetch.mock.calls[2]!;
-    expect(moviesUrl).toBe("http://qbittorrent:8080/api/v2/torrents/editCategory");
+    expect(moviesUrl).toBe("http://localhost:8080/api/v2/torrents/editCategory");
     expect(moviesInit?.method).toBe("POST");
     expect(moviesInit?.body).toBe("category=movies&savePath=%2Fdata%2Ftorrents%2Fmovies");
 
     const [tvUrl, tvInit] = mockFetch.mock.calls[3]!;
-    expect(tvUrl).toBe("http://qbittorrent:8080/api/v2/torrents/editCategory");
+    expect(tvUrl).toBe("http://localhost:8080/api/v2/torrents/editCategory");
     expect(tvInit?.method).toBe("POST");
     expect(tvInit?.body).toBe("category=tv&savePath=%2Fdata%2Ftorrents%2Ftv");
   });

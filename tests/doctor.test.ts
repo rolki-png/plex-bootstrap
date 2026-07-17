@@ -19,6 +19,23 @@ describe("runDoctor", () => {
     );
   });
 
+  it("accepts Docker Compose 5.x version output", async () => {
+    const report = await runDoctor({
+      which: async (cmd) => (cmd === "docker" ? "/usr/bin/docker" : null),
+      exec: async (cmd) => {
+        if (cmd.includes("compose version")) {
+          return { code: 0, stdout: "Docker Compose version 5.3.1", stderr: "" };
+        }
+        if (cmd.includes("docker info")) return { code: 0, stdout: "Server:", stderr: "" };
+        return { code: 1, stdout: "", stderr: "unknown" };
+      },
+      canWrite: async () => true,
+      dataRoot: "/data",
+    });
+    expect(report.checks.find((c) => c.name === "compose")?.ok).toBe(true);
+    expect(report.ok).toBe(true);
+  });
+
   it("fails when docker binary is missing", async () => {
     const report = await runDoctor({
       which: async () => null,

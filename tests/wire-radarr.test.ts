@@ -25,7 +25,8 @@ function makeCtx(fetchFn: typeof fetch, vpn = false): WireContext {
       },
     },
     state: { apiKeys: { radarr: "radarr-key" }, completedSteps: [], failedSteps: [] },
-    baseUrls: { radarr: "http://radarr:7878" },
+    baseUrls: { radarr: "http://localhost:7878" },
+    internalUrls: {},
     fetchFn,
   };
 }
@@ -51,7 +52,7 @@ describe("wireRadarr", () => {
     expect(mockFetch).toHaveBeenCalledTimes(4);
 
     const [rootCreateUrl, rootCreateInit] = mockFetch.mock.calls[1]!;
-    expect(rootCreateUrl).toBe("http://radarr:7878/api/v3/rootfolder");
+    expect(rootCreateUrl).toBe("http://localhost:7878/api/v3/rootfolder");
     expect(rootCreateInit?.method).toBe("POST");
     expect(JSON.parse(rootCreateInit?.body as string)).toEqual({ path: "/data/media/movies" });
 
