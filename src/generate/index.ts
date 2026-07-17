@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { stringify } from "yaml";
 import type { StackConfig } from "../types.ts";
 import { renderEnv } from "./env.ts";
+import { ensureFolderSkeleton } from "./folders.ts";
 import { mergeCompose, type ServiceModule } from "./merge.ts";
 import { buildBazarr } from "./modules/bazarr.ts";
 import { buildFlaresolverr } from "./modules/flaresolverr.ts";
@@ -66,6 +67,7 @@ function collectModules(config: StackConfig): ServiceModule[] {
 }
 
 export async function generateStack(config: StackConfig, outDir: string): Promise<GenerateResult> {
+  await ensureFolderSkeleton(config);
   const modules = collectModules(config);
 
   const doc = mergeCompose(modules);

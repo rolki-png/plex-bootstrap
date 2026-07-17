@@ -9,9 +9,10 @@ import { generateStack } from "../src/generate/index.ts";
 describe("generateStack core", () => {
   it("writes compose with plex seerr sonarr radarr prowlarr qbittorrent and shared /data mounts", async () => {
     const outDir = await mkdtemp(join(tmpdir(), "pb-gen-"));
+    const dataRoot = await mkdtemp(join(tmpdir(), "pb-data-"));
     const cfg = defaultStackConfig({
-      dataRoot: "/data",
-      configRoot: "/data/configs",
+      dataRoot,
+      configRoot: join(dataRoot, "configs"),
       puid: 1000,
       pgid: 1000,
       timezone: "Europe/Budapest",
@@ -30,6 +31,29 @@ describe("generateStack core", () => {
     const env = await readFile(result.envPath, "utf8");
     expect(env).toContain("PUID=1000");
     expect(env).toContain("TZ=Europe/Budapest");
-    expect(env).toContain("DATA_ROOT=/data");
+    expect(env).toContain(`DATA_ROOT=${dataRoot}`);
+  });
+
+  it("creates hardlink-safe folder skeleton under dataRoot", async () => {
+    const outDir = await mkdtemp(join(tmpdir(), "pb-gen-"));
+    const dataRoot = await mkdtemp(join(tmpdir(), "pb-data-"));
+    const cfg = defaultStackConfig({
+      dataRoot,
+      configRoot: join(dataRoot, "configs"),
+      puid: 1000,
+      pgid: 1000,
+      timezone: "UTC",
+    });
+    await generateStack(cfg, outDir);
+    const { access } = await import("node:fs/promises");
+    for (const p of [
+      join(dataRoot, "media/movies"),
+      join(dataRoot, "media/tv"),
+      join(dataRoot, "torrents/movies"),
+      join(dataRoot, "torrents/tv"),
+      join(dataRoot, "configs/sonarr"),
+    ]) {
+      await access(p);
+    }
   });
 });

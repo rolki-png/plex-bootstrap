@@ -9,9 +9,10 @@ import { generateStack } from "../src/generate/index.ts";
 
 async function gen(services: Partial<ReturnType<typeof defaultStackConfig>["services"]>, vpn?: object) {
   const outDir = await mkdtemp(join(tmpdir(), "pb-snap-"));
+  const dataRoot = await mkdtemp(join(tmpdir(), "pb-data-"));
   const cfg = defaultStackConfig({
-    dataRoot: "/data",
-    configRoot: "/data/configs",
+    dataRoot,
+    configRoot: join(dataRoot, "configs"),
     puid: 1000,
     pgid: 1000,
     timezone: "UTC",
@@ -58,9 +59,10 @@ describe("generateStack extras", () => {
     if (!dockerAvailable()) return;
 
     const outDir = await mkdtemp(join(tmpdir(), "pb-dc-"));
+    const dataRoot = await mkdtemp(join(tmpdir(), "pb-data-"));
     const cfg = defaultStackConfig({
-      dataRoot: "/data",
-      configRoot: "/data/configs",
+      dataRoot,
+      configRoot: join(dataRoot, "configs"),
       puid: 1000,
       pgid: 1000,
       timezone: "UTC",
