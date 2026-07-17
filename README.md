@@ -36,13 +36,15 @@ Interactive setup runs four phases in order:
 ```bash
 npx plex-bootstrap init
 # or
+npm run start -- init
+# or
 node dist/index.js init
 
 # custom output directory (default: ./plex-stack)
-node dist/index.js init --out-dir /path/to/plex-stack
+npm run start -- init --out-dir /path/to/plex-stack
 ```
 
-`init` exits **0** when core wiring succeeds, **1** when any core step fails (extras failures do not fail init).
+`init` exits **0** when exit-gating core wiring succeeds, **1** when any of those steps fail. Prowlarr and extras failures are reported but do not fail `init`.
 
 ### Other commands
 
@@ -77,7 +79,9 @@ node dist/index.js init --out-dir /path/to/plex-stack
 | Tautulli | Plex stats and history |
 | Recyclarr | Sync TRaSH Guides quality profiles to Sonarr/Radarr |
 
-Core wiring steps: qBittorrent → Sonarr → Radarr → Prowlarr → Seerr. Extras run after core and are isolated — a Bazarr failure does not block the core stack.
+**Wire order** (all steps run in sequence): qBittorrent → Sonarr → Radarr → Prowlarr → Seerr → extras.
+
+**Exit-gating core steps** (must all succeed for `init` / `wire` to exit 0): qBittorrent, Sonarr, Radarr, Seerr. Prowlarr runs in the wire sequence but a Prowlarr failure does not fail init — fix it manually or retry later. Extras run after Seerr and are similarly non-blocking.
 
 ## VPN (Gluetun)
 
