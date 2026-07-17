@@ -13,6 +13,8 @@ import { promptStackConfig } from "./prompts/initPrompts.js";
 import { runDoctorForDataRoot } from "./cli/doctor.js";
 import { loadState, saveState } from "./wire/state.js";
 import { runWire } from "./wire/index.js";
+import { bootstrapApiKeys } from "./wire/bootstrapKeys.js";
+import { waitForHealthy } from "./wire/health.js";
 import type { StackConfig } from "./types.js";
 
 const program = new Command();
@@ -49,6 +51,18 @@ program
         return generateStack(config, dir);
       },
       compose,
+      healthWait: async (config) => {
+        const { ready } = await waitForHealthy(buildLocalBaseUrls(config));
+        console.log(`Services responding: ${ready.join(", ") || "none"}`);
+      },
+      bootstrapKeys: async (config) => {
+        const state = await loadState(wireStatePath(config));
+        const result = await bootstrapApiKeys(config, state);
+        await saveState(wireStatePath(config), state);
+        if (result.missing.length > 0) {
+          console.log(`API keys not found yet: ${result.missing.join(", ")}`);
+        }
+      },
       wire: async () => {
         const config = savedConfig!;
         const state = await loadState(wireStatePath(config));

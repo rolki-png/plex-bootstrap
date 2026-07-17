@@ -9,6 +9,10 @@ export type InitDeps = {
   doctor: (dataRoot: string) => Promise<DoctorReport>;
   generate: (config: StackConfig, outDir: string) => Promise<GenerateResult>;
   compose: DockerCompose;
+  /** Wait for started containers to respond before wiring. */
+  healthWait: (config: StackConfig) => Promise<void>;
+  /** Read API keys from app configs into wire state before wiring. */
+  bootstrapKeys: (config: StackConfig) => Promise<void>;
   wire: () => Promise<WireReport>;
   outDir: string;
 };
@@ -26,6 +30,8 @@ export async function runInit(deps: InitDeps): Promise<number> {
 
   await deps.generate(config, deps.outDir);
   await deps.compose.up(deps.outDir);
+  await deps.healthWait(config);
+  await deps.bootstrapKeys(config);
   const report = await deps.wire();
 
   for (const step of report.steps) {

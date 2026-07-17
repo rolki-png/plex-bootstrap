@@ -26,13 +26,19 @@ describe("runInit", () => {
         down: async () => {},
         pull: async () => {},
       },
+      healthWait: async () => {
+        calls.push("health");
+      },
+      bootstrapKeys: async () => {
+        calls.push("keys");
+      },
       wire: async () => {
         calls.push("wire");
         return { ok: true, coreOk: true, steps: [] };
       },
       outDir: "/tmp/pb-out",
     });
-    expect(calls).toEqual(["generate", "up", "wire"]);
+    expect(calls).toEqual(["generate", "up", "health", "keys", "wire"]);
     expect(code).toBe(0);
   });
 
@@ -58,6 +64,8 @@ describe("runInit", () => {
         services: [],
       }),
       compose: { up: async () => {}, down: async () => {}, pull: async () => {} },
+      healthWait: async () => {},
+      bootstrapKeys: async () => {},
       wire: async () => ({
         ok: false,
         coreOk: false,
@@ -91,6 +99,8 @@ describe("runInit", () => {
           throw new Error("should not run");
         },
         compose: { up: async () => {}, down: async () => {}, pull: async () => {} },
+        healthWait: async () => {},
+        bootstrapKeys: async () => {},
         wire: async () => ({ ok: true, coreOk: true, steps: [] }),
         outDir: "/tmp/pb-out",
       }),

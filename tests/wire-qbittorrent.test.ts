@@ -121,4 +121,29 @@ describe("wireQbittorrent", () => {
     expect(tvInit?.method).toBe("POST");
     expect(tvInit?.body).toBe("category=tv&savePath=%2Fdata%2Ftorrents%2Ftv");
   });
+
+  it("logs in with the password stored in wire state", async () => {
+    const mockFetch = vi.fn();
+
+    mockFetch
+      .mockResolvedValueOnce(
+        new Response("Ok.", {
+          status: 200,
+          headers: { "Set-Cookie": "SID=test-sid; path=/" },
+        }),
+      )
+      .mockResolvedValueOnce(new Response("{}", { status: 200 }))
+      .mockResolvedValueOnce(new Response("Ok.", { status: 200 }))
+      .mockResolvedValueOnce(new Response("Ok.", { status: 200 }));
+
+    const ctx = makeCtx(mockFetch as unknown as typeof fetch);
+    ctx.state.apiKeys.qbittorrent = "s3cret";
+
+    const result = await wireQbittorrent(ctx);
+
+    expect(result.ok).toBe(true);
+    const [loginUrl, loginInit] = mockFetch.mock.calls[0]!;
+    expect(loginUrl).toBe("http://localhost:8080/api/v2/auth/login");
+    expect(loginInit?.body).toBe("username=admin&password=s3cret");
+  });
 });

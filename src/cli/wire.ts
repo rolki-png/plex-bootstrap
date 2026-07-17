@@ -2,6 +2,7 @@ import { buildInternalUrls, buildLocalBaseUrls } from "./ports.js";
 import { loadStackConfig, wireStatePath } from "./config-store.js";
 import { loadState, saveState } from "../wire/state.js";
 import { runWire } from "../wire/index.js";
+import { bootstrapApiKeys } from "../wire/bootstrapKeys.js";
 import type { WireContext } from "../wire/types.js";
 
 export async function runWireCommand(
@@ -10,6 +11,11 @@ export async function runWireCommand(
 ): Promise<number> {
   const config = await loadStackConfig(outDir);
   const state = await loadState(wireStatePath(config));
+
+  const keys = await bootstrapApiKeys(config, state);
+  if (keys.missing.length > 0) {
+    console.log(`API keys not found yet: ${keys.missing.join(", ")}`);
+  }
 
   const ctx: WireContext = {
     config,

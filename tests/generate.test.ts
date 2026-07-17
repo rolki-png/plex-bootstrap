@@ -32,6 +32,10 @@ describe("generateStack core", () => {
     expect(env).toContain("PUID=1000");
     expect(env).toContain("TZ=Europe/Budapest");
     expect(env).toContain(`DATA_ROOT=${dataRoot}`);
+    expect(env).toContain(`WEBUI_PASSWORD=${cfg.qbittorrentPassword}`);
+
+    const qbittorrent = doc.services.qbittorrent as { environment?: Record<string, string> };
+    expect(qbittorrent.environment?.WEBUI_PASSWORD).toBe("${WEBUI_PASSWORD}");
 
     const sonarr = doc.services.sonarr as { ports?: string[] };
     const radarr = doc.services.radarr as { ports?: string[] };

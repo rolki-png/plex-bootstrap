@@ -29,15 +29,20 @@ export type StackConfig = {
   pgid: number;
   timezone: string;
   plexClaim?: string;
+  /** Known qBittorrent WebUI password, injected via env and reused during wiring. */
+  qbittorrentPassword: string;
   services: ServiceFlags;
   vpn?: VpnConfig;
 };
+
+export const DEFAULT_QBITTORRENT_PASSWORD = "adminadmin";
 
 export function defaultStackConfig(
   base: Pick<StackConfig, "dataRoot" | "configRoot" | "puid" | "pgid" | "timezone">,
 ): StackConfig {
   return {
     ...base,
+    qbittorrentPassword: DEFAULT_QBITTORRENT_PASSWORD,
     services: {
       plex: true,
       seerr: true,
