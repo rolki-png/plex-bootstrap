@@ -9,6 +9,48 @@ const CATEGORIES = [
   { name: "tv", savePath: "/data/torrents/tv" },
 ] as const;
 
+type QbitCategory = {
+  name: string;
+  savePath: string;
+};
+
+type QbitCategories = Record<string, QbitCategory>;
+
+function authHeaders(cookie: string, baseUrl: string): Record<string, string> {
+  return {
+    Cookie: cookie,
+    Referer: baseUrl,
+  };
+}
+
+async function ensureCategory(
+  fetchFn: typeof fetch,
+  baseUrl: string,
+  cookie: string,
+  name: string,
+  savePath: string,
+  existing: QbitCategories,
+): Promise<void> {
+  const current = existing[name];
+  if (current?.savePath === savePath) {
+    return;
+  }
+
+  const endpoint = current ? "editCategory" : "createCategory";
+  const categoryResponse = await fetchFn(`${baseUrl}/api/v2/torrents/${endpoint}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      ...authHeaders(cookie, baseUrl),
+    },
+    body: `category=${encodeURIComponent(name)}&savePath=${encodeURIComponent(savePath)}`,
+  });
+
+  if (!categoryResponse.ok) {
+    throw new Error(`${endpoint} ${name} failed: HTTP ${categoryResponse.status}`);
+  }
+}
+
 function extractSid(response: Response): string | null {
   const cookies =
     typeof response.headers.getSetCookie === "function"
@@ -60,20 +102,18 @@ export async function wireQbittorrent(ctx: WireContext): Promise<StepResult> {
 
     const cookie = `SID=${sid}`;
 
-    for (const { name, savePath } of CATEGORIES) {
-      const categoryResponse = await fetchFn(`${baseUrl}/api/v2/torrents/createCategory`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Cookie: cookie,
-          Referer: baseUrl,
-        },
-        body: `category=${encodeURIComponent(name)}&savePath=${encodeURIComponent(savePath)}`,
-      });
+    const categoriesResponse = await fetchFn(`${baseUrl}/api/v2/torrents/categories`, {
+      headers: authHeaders(cookie, baseUrl),
+    });
 
-      if (!categoryResponse.ok) {
-        throw new Error(`createCategory ${name} failed: HTTP ${categoryResponse.status}`);
-      }
+    if (!categoriesResponse.ok) {
+      throw new Error(`list categories failed: HTTP ${categoriesResponse.status}`);
+    }
+
+    const existing = (await categoriesResponse.json()) as QbitCategories;
+
+    for (const { name, savePath } of CATEGORIES) {
+      await ensureCategory(fetchFn, baseUrl, cookie, name, savePath, existing);
     }
 
     return {
