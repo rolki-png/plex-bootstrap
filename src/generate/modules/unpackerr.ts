@@ -1,5 +1,6 @@
 import type { StackConfig } from "../../types.js";
 import type { ServiceModule } from "../merge.js";
+import { standardVolumes } from "./linuxserver.js";
 import { mediaAndDownload } from "./networks.js";
 
 export function buildUnpackerr(_cfg: StackConfig): ServiceModule {
@@ -11,7 +12,8 @@ export function buildUnpackerr(_cfg: StackConfig): ServiceModule {
       environment: {
         TZ: "${TZ}",
       },
-      volumes: ["${CONFIG_ROOT}/unpackerr:/config"],
+      user: "${PUID}:${PGID}",
+      volumes: standardVolumes("unpackerr"),
       networks: mediaAndDownload(),
       restart: "unless-stopped",
     },

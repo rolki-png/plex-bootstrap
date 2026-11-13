@@ -20,7 +20,7 @@ async function gen(services: Partial<ReturnType<typeof defaultStackConfig>["serv
   if (vpn) cfg.vpn = vpn as never;
   const result = await generateStack(cfg, outDir);
   const doc = parseYaml(await readFile(result.composePath, "utf8")) as {
-    services: Record<string, { network_mode?: string; networks?: string[] }>;
+    services: Record<string, { network_mode?: string; networks?: string[]; volumes?: string[]; user?: string }>;
   };
   return { doc, result };
 }
@@ -38,6 +38,14 @@ describe("generateStack extras", () => {
     for (const name of ["jackett", "flaresolverr", "unpackerr", "bazarr", "tautulli", "recyclarr"]) {
       expect(doc.services).toHaveProperty(name);
     }
+  });
+
+  it("mounts /data into unpackerr and runs it as the stack user", async () => {
+    const { doc } = await gen({ unpackerr: true });
+    const svc = doc.services.unpackerr;
+    expect(svc.volumes).toContain("${DATA_ROOT}:/data");
+    expect(svc.volumes).toContain("${CONFIG_ROOT}/unpackerr:/config");
+    expect(svc.user).toBe("${PUID}:${PGID}");
   });
 
   it("wraps qbittorrent with gluetun when vpn enabled", async () => {
