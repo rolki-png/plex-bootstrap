@@ -52,6 +52,7 @@ npm run start -- init --out-dir /path/to/plex-stack
 |---------|---------|
 | `doctor --data-root /data` | Preflight checks only |
 | `wire [--out-dir ./plex-stack] [--retry]` | Re-run wiring; `--retry` skips steps that already succeeded |
+| `generate [--out-dir ./plex-stack]` | Regenerate compose files from an edited `stack-config.json` |
 | `up` / `down` | Start or stop the stack |
 | `update` | Pull images and recreate containers |
 
@@ -68,7 +69,7 @@ npm run start -- init --out-dir /path/to/plex-stack
 | Prowlarr | Indexer manager | 9696 |
 | qBittorrent | Download client | 8080 |
 
-**Optional extras** (off by default; enable in `stack-config.json` and regenerate, or extend compose manually):
+**Optional extras** (off by default; enable in `stack-config.json`, run `plex-bootstrap generate`, then `plex-bootstrap up`, or extend compose manually):
 
 | Service | Role |
 |---------|------|
