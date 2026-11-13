@@ -147,3 +147,23 @@ describe("wireQbittorrent", () => {
     expect(loginInit?.body).toBe("username=admin&password=s3cret");
   });
 });
+
+describe("wireQbittorrent session cookie", () => {
+  it.each([
+    ["SID", "SID=abc; path=/", "SID=abc", 200],
+    ["QBT_SID_8080", "QBT_SID_8080=xyz; HttpOnly; path=/", "QBT_SID_8080=xyz", 204],
+  ])("accepts %s and sends it back under the same name", async (_name, setCookie, expected, status) => {
+    const mockFetch = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(null, { status, headers: { "Set-Cookie": setCookie } }))
+      .mockResolvedValueOnce(new Response("{}", { status: 200 }))
+      .mockResolvedValue(new Response("Ok.", { status: 200 }));
+
+    const result = await wireQbittorrent(makeCtx(mockFetch as unknown as typeof fetch));
+
+    expect(result.ok).toBe(true);
+    for (const call of mockFetch.mock.calls.slice(1)) {
+      expect(call[1]?.headers).toMatchObject({ Cookie: expected });
+    }
+  });
+});

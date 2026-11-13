@@ -10,7 +10,7 @@ Internal URLs use Docker service hostnames (`sonarr`, `radarr`, `plex`, …). Ho
 
 **Fallback:** `Create categories movies and tv with save paths /data/torrents/movies and /data/torrents/tv in qBittorrent WebUI`
 
-Web UI: `http://localhost:8080` (default login `admin` / `adminadmin` — change after first login)
+Web UI: `http://localhost:8080` (login `admin` with the qBittorrent password you gave to `init`; it is seeded into `<CONFIG_ROOT>/qbittorrent/qBittorrent/qBittorrent.conf` on first generate and a later change in the WebUI is kept)
 
 | UI location | Field | Value |
 |-------------|-------|-------|

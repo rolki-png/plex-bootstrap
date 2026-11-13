@@ -8,6 +8,5 @@ export function renderEnv(config: StackConfig): string {
     `DATA_ROOT=${config.dataRoot}`,
     `CONFIG_ROOT=${config.configRoot}`,
     `PLEX_CLAIM=${config.plexClaim ?? ""}`,
-    `WEBUI_PASSWORD=${config.qbittorrentPassword}`,
   ].join("\n") + "\n";
 }
