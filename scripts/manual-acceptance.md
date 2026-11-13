@@ -40,7 +40,7 @@ After `init` or manual `generateStack` run, under `DATA_ROOT`:
 - [ ] `init` / `wire` exits **0** only when all exit-gating core steps succeed; exits **1** when any core step fails
 - [ ] `node dist/index.js wire --retry` skips steps already marked successful in wire state
 
-## Optional extras (edit `stack-config.json`, regenerate, recreate)
+## Optional extras (edit `stack-config.json`, run `plex-bootstrap generate`, then `plex-bootstrap up`)
 
 - [ ] Enabling Jackett, FlareSolverr, Unpackerr, Bazarr, Tautulli, Recyclarr adds only the opted-in services to compose
 - [ ] `docker compose config` still succeeds with all extras enabled

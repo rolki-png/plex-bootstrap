@@ -1,20 +1,41 @@
 {
   "name": "plex-bootstrap",
   "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
+  "description": "First-timer CLI: pick Plex stack services, generate Compose, auto-wire Sonarr/Radarr/Seerr and friends",
+  "author": "Roland Kiraly",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rolki-png/plex-bootstrap.git"
+  },
+  "homepage": "https://github.com/rolki-png/plex-bootstrap#readme",
+  "bugs": {
+    "url": "https://github.com/rolki-png/plex-bootstrap/issues"
+  },
+  "keywords": [
+    "plex",
+    "sonarr",
+    "radarr",
+    "docker-compose",
+    "homelab",
+    "cli"
+  ],
+  "type": "module",
+  "bin": {
+    "plex-bootstrap": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
   "scripts": {
     "test": "vitest run",
     "build": "tsc -p tsconfig.json",
     "test:watch": "vitest",
-    "start": "node dist/index.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
-  "bin": {
-    "plex-bootstrap": "./dist/index.js"
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build && npm test"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
