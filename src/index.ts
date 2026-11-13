@@ -6,6 +6,7 @@ import { doctorCommand } from "./cli/doctor.js";
 import { runInit } from "./cli/init.js";
 import { saveStackConfig, wireStatePath } from "./cli/config-store.js";
 import { buildInternalUrls, buildLocalBaseUrls } from "./cli/ports.js";
+import { runGenerate } from "./cli/generate.js";
 import { runWireCommand } from "./cli/wire.js";
 import { createDockerCompose } from "./cli/up.js";
 import { generateStack } from "./generate/index.js";
@@ -79,6 +80,16 @@ program
       outDir,
     });
     process.exitCode = code;
+  });
+
+program
+  .command("generate")
+  .description("Regenerate compose files from an edited stack-config.json")
+  .option("--out-dir <path>", "stack output directory", "./plex-stack")
+  .action(async (opts: { outDir: string }) => {
+    const result = await runGenerate(resolve(opts.outDir));
+    console.log(`Wrote ${result.composePath}`);
+    console.log(`Services: ${result.services.join(", ")}`);
   });
 
 program
