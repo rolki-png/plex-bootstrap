@@ -128,3 +128,13 @@ docker compose -f ./plex-stack/docker-compose.yml --env-file ./plex-stack/.env r
 ```
 
 Schedule that command with cron or a systemd timer.
+
+## Development
+
+```bash
+npm ci
+npm run build
+npm test
+```
+
+Three tests in `tests/generate-compose-config.test.ts` run `docker compose config`, so they need Docker installed and the daemon running. They skip when it is missing. The `CI` workflow runs the build and tests on pushes to `master` and on pull requests, with Docker available.
