@@ -51,16 +51,18 @@ async function ensureCategory(
   }
 }
 
-function extractSid(response: Response): string | null {
+type Session = { name: string; value: string };
+
+function extractSession(response: Response): Session | null {
   const cookies =
     typeof response.headers.getSetCookie === "function"
       ? response.headers.getSetCookie()
       : [response.headers.get("set-cookie")].filter((c): c is string => c !== null);
 
   for (const cookie of cookies) {
-    const match = cookie.match(/(?:^|;\s*)SID=([^;]+)/);
-    if (match?.[1]) {
-      return match[1];
+    const match = cookie.match(/^\s*(SID|QBT_SID_\d+)=([^;]+)/);
+    if (match?.[1] && match[2]) {
+      return { name: match[1], value: match[2] };
     }
   }
 
@@ -91,16 +93,16 @@ export async function wireQbittorrent(ctx: WireContext): Promise<StepResult> {
       body: `username=${DEFAULT_USER}&password=${encodeURIComponent(password)}`,
     });
 
-    if (!loginResponse.ok) {
+    if (loginResponse.status < 200 || loginResponse.status >= 300) {
       throw new Error(`login failed: HTTP ${loginResponse.status}`);
     }
 
-    const sid = extractSid(loginResponse);
-    if (!sid) {
+    const session = extractSession(loginResponse);
+    if (!session) {
       throw new Error("login succeeded but no SID cookie returned");
     }
 
-    const cookie = `SID=${sid}`;
+    const cookie = `${session.name}=${session.value}`;
 
     const categoriesResponse = await fetchFn(`${baseUrl}/api/v2/torrents/categories`, {
       headers: authHeaders(cookie, baseUrl),

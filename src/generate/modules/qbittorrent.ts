@@ -9,7 +9,6 @@ export function buildQbittorrent(cfg: StackConfig): ServiceModule {
     container_name: "qbittorrent",
     environment: linuxserverEnv({
       WEBUI_PORT: "8080",
-      WEBUI_PASSWORD: "${WEBUI_PASSWORD}",
     }),
     volumes: standardVolumes("qbittorrent"),
     restart: "unless-stopped",

@@ -4,6 +4,7 @@ import { stringify } from "yaml";
 import type { StackConfig } from "../types.js";
 import { renderEnv } from "./env.js";
 import { ensureFolderSkeleton } from "./folders.js";
+import { seedQbittorrentConf } from "./qbittorrent-conf.js";
 import { mergeCompose, type ServiceModule } from "./merge.js";
 import { buildBazarr } from "./modules/bazarr.js";
 import { buildFlaresolverr } from "./modules/flaresolverr.js";
@@ -68,6 +69,7 @@ function collectModules(config: StackConfig): ServiceModule[] {
 
 export async function generateStack(config: StackConfig, outDir: string): Promise<GenerateResult> {
   await ensureFolderSkeleton(config);
+  await seedQbittorrentConf(config);
   const modules = collectModules(config);
 
   const doc = mergeCompose(modules);
